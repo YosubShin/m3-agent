@@ -36,9 +36,7 @@ try:
     config = json.load(open("configs/api_config.json"))
     client = {}
     for model_name in config.keys():
-        client[model_name] = openai.AzureOpenAI(
-            azure_endpoint=config[model_name]["azure_endpoint"],
-            api_version=config[model_name]["api_version"],
+        client[model_name] = openai.OpenAI(
             api_key=config[model_name]["api_key"],
         )
 except:

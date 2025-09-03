@@ -31,10 +31,8 @@ sys.modules["videograph"] = mmagent.videograph
 processing_config = json.load(open("configs/processing_config.json"))
 model_name = "models/M3-Agent-Control"
 config = json.load(open("configs/api_config.json"))
-gpt_model = "gpt-4o-2024-11-20"
-client = openai.AzureOpenAI(
-    azure_endpoint=config[gpt_model]["azure_endpoint"],
-    api_version=config[gpt_model]["api_version"],
+gpt_model = "gpt-4o"
+client = openai.OpenAI(
     api_key=config[gpt_model]["api_key"],
 )
 
