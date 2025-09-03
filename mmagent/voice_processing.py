@@ -24,8 +24,9 @@ from speakerlab.utils.builder import dynamic_import
 
 from pydub import AudioSegment
 from .prompts import prompt_audio_segmentation
-from .utils.chat_api import generate_messages, get_response
+from .utils.chat_api import generate_messages, get_response, get_response_gemini
 from .utils.general import validate_and_fix_json, normalize_embedding
+from google.genai import types
 import io
 
 processing_config = json.load(open("configs/processing_config.json"))
@@ -134,22 +135,28 @@ def process_voices(video_graph, base64_audio, base64_video, save_path, preproces
         return audio_segments
 
     def diarize_audio(base64_video, filter=None):
-        input = [
-            {
-                "type": "video_base64/mp4",
-                "content": base64_video.decode("utf-8"),
-            },
-            {
-                "type": "text",
-                "content": prompt_audio_segmentation,
-            },
-        ]
-        messages = generate_messages(input)
+        # Decode base64 video to raw bytes
+        video_bytes = base64.b64decode(base64_video)
+        
+        # Build Content object with video and text prompt
+        content = types.Content(
+            parts=[
+                types.Part(
+                    inline_data=types.Blob(data=video_bytes, mime_type="video/mp4")
+                ),
+                types.Part(text=prompt_audio_segmentation)
+            ]
+        )
+        
         model = "gemini-2.5-flash"
         asrs = None
         for i in range(MAX_RETRIES):
-            # response, _ = get_response_with_retry(model, messages, timeout=30)
-            response, _ = get_response(model, messages, timeout=30)
+            # Direct call to Gemini with Content object
+            response, _ = get_response_gemini(
+                model=model,
+                content=content,
+                timeout=30
+            )
             asrs = validate_and_fix_json(response)
             if asrs is not None:
                 break

@@ -14,6 +14,8 @@
 import json
 import openai
 from google import genai
+from google.genai import types
+import base64
 from concurrent.futures import ThreadPoolExecutor
 from time import sleep
 import logging
@@ -48,8 +50,32 @@ except:
 
 MAX_RETRIES = 5
 
+def get_response_gemini(model, content, timeout=30):
+    """Direct Gemini API call with types.Content.
+    
+    Args:
+        model (str): Gemini model identifier
+        content (types.Content): Pre-built Content object with parts
+        timeout (int): Request timeout
+        
+    Returns:
+        tuple: (response text, token count)
+    """
+    response = client[model].models.generate_content(
+        model=model,
+        contents=content,
+        config=types.GenerateContentConfig(
+            temperature=temp,
+            max_output_tokens=8192
+        )
+    )
+    
+    return response.text, response.usage_metadata.total_token_count
+
 def get_response(model, messages, timeout=30):
-    """Get chat completion response from specified model.
+    """Get chat completion response from OpenAI-compatible models.
+    
+    For Gemini models, use get_response_gemini() instead.
 
     Args:
         model (str): Model identifier
@@ -58,30 +84,36 @@ def get_response(model, messages, timeout=30):
     Returns:
         tuple: (response content, total tokens used)
     """
-    if "gemini" in model.lower():
-        # Handle Gemini models
-        from google import genai
-        # Convert OpenAI format messages to Gemini format
-        contents = []
-        for msg in messages:
-            role = "user" if msg["role"] == "user" else "model"
-            contents.append({"role": role, "parts": [{"text": msg["content"]}]})
+    # Handle OpenAI models
+    response = client[model].chat.completions.create(
+        model=model, messages=messages, temperature=temp, timeout=timeout, max_tokens=8192
+    )
+    
+    # return answer and number of tokens
+    return response.choices[0].message.content, response.usage.total_tokens
+
+def get_response_gemini_with_retry(model, content, timeout=30):
+    """Retry get_response_gemini up to MAX_RETRIES times.
+    
+    Args:
+        model (str): Gemini model identifier
+        content (types.Content): Pre-built Content object with parts
+        timeout (int): Request timeout
         
-        response = client[model].models.generate_content(
-            model=model,
-            contents=contents,
-            config={"temperature": temp, "max_output_tokens": 8192}
-        )
-        # Gemini doesn't provide token count in the same way
-        return response.text, response.usage_metadata.total_token_count
-    else:
-        # Handle OpenAI models
-        response = client[model].chat.completions.create(
-            model=model, messages=messages, temperature=temp, timeout=timeout, max_tokens=8192
-        )
+    Returns:
+        tuple: (response text, token count)
         
-        # return answer and number of tokens
-        return response.choices[0].message.content, response.usage.total_tokens
+    Raises:
+        Exception: If all retries fail
+    """
+    for i in range(MAX_RETRIES):
+        try:
+            return get_response_gemini(model, content, timeout)
+        except Exception as e:
+            sleep(20)
+            logger.warning(f"Retry {i} times, exception: {e}")
+            continue
+    raise Exception(f"Failed to get Gemini response after {MAX_RETRIES} retries")
 
 def get_response_with_retry(model, messages, timeout=30):
     """Retry get_response up to MAX_RETRIES times with error handling.
