@@ -27,5 +27,5 @@
   "ckpt": "/home/yosubs/.cache/huggingface/hub/models--ByteDance-Seed--M3-Agent-Memorization/snapshots/01480de764d07144bc4716c5610ef97684a27b58",
   "model": "qwen2.5-omni",
   "total_round": 5,
-  "batch_size": 64
+  "batch_size": 4
 }
