@@ -77,7 +77,7 @@ def streaming_process_video(sample):
         faces_file = os.path.join(save_path, f"clip_{clip_id}_faces.json")
         
         if os.path.exists(voices_file) and os.path.exists(faces_file):
-            logger.info(f"Skipping clip {clip_id} - already processed")
+            print(f"Skipping clip {clip_id} - already processed")
             continue
         
         base64_video, base64_frames, base64_audio = process_video_clip(clip_path)
