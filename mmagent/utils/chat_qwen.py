@@ -41,7 +41,7 @@ def get_response(messages):
             processing_config["ckpt"],
             torch_dtype="auto",
             device_map="auto",
-            attn_implementation="flash_attention_2",
+            attn_implementation="eager",
         )
         thinker.eval()
         processor = Qwen2_5OmniProcessor.from_pretrained(processing_config["ckpt"])
