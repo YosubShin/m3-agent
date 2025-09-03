@@ -13,6 +13,7 @@
 # limitations under the License.
 import json
 import openai
+from google import genai
 from concurrent.futures import ThreadPoolExecutor
 from time import sleep
 import logging
@@ -36,9 +37,12 @@ try:
     config = json.load(open("configs/api_config.json"))
     client = {}
     for model_name in config.keys():
-        client[model_name] = openai.OpenAI(
-            api_key=config[model_name]["api_key"],
-        )
+        if "gemini" in model_name.lower():
+            client[model_name] = genai.Client(api_key=config[model_name]["api_key"])
+        else:
+            client[model_name] = openai.OpenAI(
+                api_key=config[model_name]["api_key"],
+            )
 except:
     pass
 
@@ -54,12 +58,30 @@ def get_response(model, messages, timeout=30):
     Returns:
         tuple: (response content, total tokens used)
     """
-    response = client[model].chat.completions.create(
-        model=model, messages=messages, temperature=temp, timeout=timeout, max_tokens=8192
-    )
-    
-    # return answer and number of tokens
-    return response.choices[0].message.content, response.usage.total_tokens
+    if "gemini" in model.lower():
+        # Handle Gemini models
+        from google import genai
+        # Convert OpenAI format messages to Gemini format
+        contents = []
+        for msg in messages:
+            role = "user" if msg["role"] == "user" else "model"
+            contents.append({"role": role, "parts": [{"text": msg["content"]}]})
+        
+        response = client[model].models.generate_content(
+            model=model,
+            contents=contents,
+            config={"temperature": temp, "max_output_tokens": 8192}
+        )
+        # Gemini doesn't provide token count in the same way
+        return response.text, response.usage_metadata.total_token_count
+    else:
+        # Handle OpenAI models
+        response = client[model].chat.completions.create(
+            model=model, messages=messages, temperature=temp, timeout=timeout, max_tokens=8192
+        )
+        
+        # return answer and number of tokens
+        return response.choices[0].message.content, response.usage.total_tokens
 
 def get_response_with_retry(model, messages, timeout=30):
     """Retry get_response up to MAX_RETRIES times with error handling.

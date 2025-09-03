@@ -7,5 +7,6 @@ tqdm
 openai 
 moviepy
 httpx==0.23.0
+google-genai
 
 # python==3.9.2

@@ -2,12 +2,10 @@
   "gpt-4o": {
     "api_key": ""
   },
-  "gemini-1.5-pro-002": {
-    "base_url": "",
+  "gemini-2.5-flash": {
     "api_key": ""
   },
   "text-embedding-3-large": {
-    "base_url": "",
     "api_key": ""
   }
 }
