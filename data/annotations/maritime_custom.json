@@ -1,0 +1,104 @@
+{
+  "maritime_departure": {
+    "video_path": "data/videos/2.mp4",
+    "mem_path": "data/memory_graphs/2.pkl",
+    "qa_list": [
+      {
+        "question": "Describe the visual appearance of the captain, including their clothing and any accessories.",
+        "answer": "Dark navy blue uniform with gold shoulder stripes, gray sweater over uniform, small microphone clipped to collar",
+        "question_id": "maritime_Q01",
+        "reasoning": "Visual-only information about captain's appearance that cannot be derived from audio transcript",
+        "type": ["Visual Understanding"],
+        "before_clip": 0
+      },
+      {
+        "question": "How many different crew members interact with control panels throughout the entire video?",
+        "answer": "At least 5 people",
+        "question_id": "maritime_Q02",
+        "reasoning": "Requires tracking multiple people across different clips and identifying unique individuals visually",
+        "type": ["Long-term Tracking", "Visual Understanding"],
+        "before_clip": 15
+      },
+      {
+        "question": "What color shirt does the person wear who handles paperwork in the beginning and later uses the telephone?",
+        "answer": "Maroon",
+        "question_id": "maritime_Q03",
+        "reasoning": "Requires visual tracking of the same person across multiple scenes and activities",
+        "type": ["Cross-Modal Reasoning", "Visual Tracking"],
+        "before_clip": 15
+      },
+      {
+        "question": "Describe the lighting conditions change from the beginning to the end of the video.",
+        "answer": "From fluorescent-lit interior to dark/night conditions visible through windows",
+        "question_id": "maritime_Q04",
+        "reasoning": "Requires visual observation of ambient lighting changes across the entire video duration",
+        "type": ["Temporal Visual Understanding"],
+        "before_clip": 15
+      },
+      {
+        "question": "What is the hair color and length of the person who mentions not having a 2am wake up?",
+        "answer": "Blonde, shoulder-length",
+        "question_id": "maritime_Q05",
+        "reasoning": "Visual-only information that links speaker identity to physical appearance",
+        "type": ["Cross-Modal Matching"],
+        "before_clip": 13
+      },
+      {
+        "question": "How does the crew member in the green jacket position themselves differently at the control panel compared to others?",
+        "answer": "Leans over the panel while adjusting controls",
+        "question_id": "maritime_Q06",
+        "reasoning": "Requires visual observation of body language and positioning that cannot be heard",
+        "type": ["Visual Behavior Analysis"],
+        "before_clip": 10
+      },
+      {
+        "question": "What visual displays or screens can be seen on the control panels throughout the video?",
+        "answer": "Radar imagery, navigational information screens",
+        "question_id": "maritime_Q07",
+        "reasoning": "Purely visual information about equipment that wouldn't be mentioned in dialogue",
+        "type": ["Visual Detail Extraction"],
+        "before_clip": 15
+      },
+      {
+        "question": "Describe the physical layout and color scheme of the control room ceiling.",
+        "answer": "High ceiling with gray metallic paneling and recessed lighting",
+        "question_id": "maritime_Q08",
+        "reasoning": "Environmental visual details that provide context but aren't discussed verbally",
+        "type": ["Spatial Understanding"],
+        "before_clip": 0
+      },
+      {
+        "question": "Which crew member appears in the most different locations throughout the video?",
+        "answer": "The person in the black jacket",
+        "question_id": "maritime_Q09",
+        "reasoning": "Requires tracking individuals across multiple scenes and locations over time",
+        "type": ["Long-term Visual Tracking"],
+        "before_clip": 15
+      },
+      {
+        "question": "What gesture does the captain make while explaining the indicator procedure?",
+        "answer": "Points to specific controls on the panel",
+        "question_id": "maritime_Q10",
+        "reasoning": "Non-verbal communication that can only be observed visually",
+        "type": ["Gesture Recognition"],
+        "before_clip": 0
+      },
+      {
+        "question": "How many people are wearing different types of headwear throughout the video?",
+        "answer": "Two (helmet and baseball cap)",
+        "question_id": "maritime_Q11",
+        "reasoning": "Requires visual scanning across all clips to count unique headwear instances",
+        "type": ["Visual Counting", "Long-term Observation"],
+        "before_clip": 15
+      },
+      {
+        "question": "What is visible through the windows at different times in the video?",
+        "answer": "Darkness/night sky in later clips, no clear view in early clips",
+        "question_id": "maritime_Q12",
+        "reasoning": "Environmental context that changes over time and is only visually observable",
+        "type": ["Environmental Visual Understanding"],
+        "before_clip": 15
+      }
+    ]
+  }
+}
