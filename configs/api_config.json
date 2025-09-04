@@ -6,6 +6,7 @@
     "api_key": ""
   },
   "text-embedding-3-large": {
-    "api_key": ""
+    "api_key": "",
+    "qpm": 100
   }
 }
