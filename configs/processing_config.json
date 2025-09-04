@@ -9,7 +9,7 @@
   "max_faces_per_character": 3,
   "min_duration_for_audio": 2,
   "history_length": 0,
-  "max_retries": 20,
+  "max_retries": 3,
   "query_num": 10,
   "topk": 2,
   "max_retrieval_steps": 5,

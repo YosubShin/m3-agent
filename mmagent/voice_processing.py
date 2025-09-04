@@ -151,17 +151,35 @@ def process_voices(video_graph, base64_audio, base64_video, save_path, preproces
         model = "gemini-2.5-flash"
         asrs = None
         for i in range(MAX_RETRIES):
-            # Direct call to Gemini with Content object
-            response, _ = get_response_gemini(
-                model=model,
-                content=content,
-                timeout=30
-            )
-            asrs = validate_and_fix_json(response)
-            if asrs is not None:
-                break
+            try:
+                # Direct call to Gemini with Content object
+                response, _ = get_response_gemini(
+                    model=model,
+                    content=content,
+                    timeout=30
+                )
+                
+                # Check if response is None or empty
+                if response is None:
+                    logger.warning(f"Attempt {i+1}: Gemini returned None response (possibly no speech in video)")
+                    continue
+                    
+                if response.strip() == "":
+                    logger.warning(f"Attempt {i+1}: Gemini returned empty response")
+                    continue
+                
+                asrs = validate_and_fix_json(response)
+                if asrs is not None:
+                    break
+            except Exception as e:
+                logger.warning(f"Attempt {i+1} failed with error: {e}")
+                if i == MAX_RETRIES - 1:
+                    logger.error(f"All {MAX_RETRIES} attempts failed for diarize_audio")
+                continue
+        
         if asrs is None:
-            raise Exception("Failed to diarize audio")
+            logger.warning("No audio segments detected or failed to parse response - returning empty list")
+            return []  # Return empty list instead of raising exception
 
         for asr in asrs:
             start_min, start_sec = map(int, asr["start_time"].split(':'))
